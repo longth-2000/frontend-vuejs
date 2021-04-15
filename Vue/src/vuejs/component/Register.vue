@@ -39,14 +39,23 @@
         <div class="form-group">
           <button class="btn btn-primary" @click="register">Đăng kí</button>
           <span>{{ message }}</span>
+          <router-link
+            class="router"
+            v-bind:class="{ 'display-router': isActive }"
+            to="/"
+            >Login</router-link
+          >
         </div>
       </div>
     </div>
   </div>
 </template>
 <style>
-.router-link {
+.router {
   display: none;
+}
+.display-router {
+  display: inline;
 }
 .register-success {
   display: inline;
@@ -81,19 +90,22 @@ export default {
             response.data.state !== "existed"
           ) {
             const errorRegister = response.data.details;
-            for (let index = 0; index < errorRegister.length; index++) {
+            errorRegister.forEach(element => {
               this.errors.push({
-                message: errorRegister[index].message,
-                key: errorRegister[index].context.key
+                message: element.message,
+                key: element.context.key
               });
-            }
+            });
+          } else {
+            this.message = response.data.message;
+            this.isActive = true
           }
-          else this.message = response.data.message
+          console.log(response.data);
         });
     },
     showError(errorType) {
       var object = {};
-      this.errors.forEach((error, index) => {
+      this.errors.forEach(error => {
         if (error.key == errorType) {
           object = error;
         }

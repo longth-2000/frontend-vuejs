@@ -1,5 +1,9 @@
 <template>
-  <div>
-  <h1>Welcome to website</h1>
-  </div>
-</template
+     <router-link to="/profile/create-profile">Create my profile</router-link>
+</template>
+<script>
+
+</script>
+<style>
+
+</style>

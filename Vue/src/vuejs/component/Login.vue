@@ -28,37 +28,34 @@
           <button class="btn btn-primary" v-on:click="Login">
             Đăng nhập
           </button>
-
-          <router-link class="router" to="/register"
-            >Create an account</router-link
-          >
+          <router-link to="/register">Create an account</router-link>
         </div>
         <div class="notification">
-          <h5
-            class="error-notification"
-            v-bind:class="{ 'green-notification': isActive }"
-          >
-            {{ message }}
+          <h5 class="error-notification">
+            <span>{{message}}</span>
           </h5>
         </div>
+         <router-link to="/home">Home</router-link>
       </div>
     </div>
   </div>
 </template>
 <style>
 .router {
-  margin-left: 330px;
+  display: none;
 }
 .error-notification {
   color: red;
 }
 .green-notification {
   color: green;
+  display: inline;
 }
+
 </style>
 
 <script>
-import { router } from "../routes/routes.js";
+import Vue from 'vue'
 export default {
   data() {
     return {
@@ -72,7 +69,9 @@ export default {
       this.axios
         .post("https://sfbserver.herokuapp.com", this.formdata)
         .then((response) => {
+          Vue.prototype.$appName = response.data._id
           this.message = response.data.message
+          console.log(response.data)
         });
     },
   },

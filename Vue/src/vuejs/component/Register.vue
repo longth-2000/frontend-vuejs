@@ -112,6 +112,6 @@ export default {
       });
       return object.message;
     }
-  }
+  },
 };
 </script>

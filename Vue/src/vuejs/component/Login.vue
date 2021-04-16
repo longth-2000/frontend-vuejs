@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-md-6">
         <h1>Đăng nhập</h1>
-
+        <!-- <button @click="handleSubmit">oke</button> -->
         <div class="form-group">
           <label>Email</label>
           <input
@@ -28,14 +28,16 @@
           <button class="btn btn-primary" v-on:click="Login">
             Đăng nhập
           </button>
-          <router-link to="/register">Create an account</router-link>
+          <router-link to="/register">
+            Create an account
+          </router-link>
         </div>
         <div class="notification">
           <h5 class="error-notification">
-            <span>{{message}}</span>
+            <span>{{ message }}</span>
           </h5>
         </div>
-         <router-link to="/home">Home</router-link>
+        <router-link to="/home">Home</router-link>
       </div>
     </div>
   </div>
@@ -51,29 +53,32 @@
   color: green;
   display: inline;
 }
-
 </style>
 
 <script>
-import Vue from 'vue'
+import Vue from "vue";
 export default {
   data() {
     return {
       formdata: {},
       message: "",
-      isActive: false,
+      isActive: false
     };
+  },
+  computed: {
+    username() {
+      return this.$store.state.name;
+    }
   },
   methods: {
     Login() {
-      this.axios
-        .post("https://sfbserver.herokuapp.com", this.formdata)
-        .then((response) => {
-          Vue.prototype.$appName = response.data._id
-          this.message = response.data.message
-          console.log(response.data)
-        });
+      this.axios.post("https://sfbserver.herokuapp.com", this.formdata).then(response => {
+        this.$store.commit("changeUserindex", response.data._id);
+        this.$store.commit("changeEmailUser", response.data.Email);
+        /*this.message = response.data.message; */
+        console.log(response.data);
+      });
     },
-  },
+  }
 };
 </script>

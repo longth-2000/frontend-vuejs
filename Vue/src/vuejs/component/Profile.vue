@@ -8,6 +8,9 @@
     <div>
       <label>Age:{{listProfile.Age}}</label>
     </div>
+     <div>
+      <label>Level:{{listProfile.Level}}</label>
+    </div>
     <div>
       <img v-bind:src="imageLink" />
     </div>
@@ -23,12 +26,13 @@ export default {
     };
   },
   mounted() {
-    this.axios.get(`https://sfbserver.herokuapp.com/profile/${this.$appName}`)
+    this.axios.get(`https://sfbserver.herokuapp.com/${this.$store.state.indexUser}`)
     .then(response => {
      this.listProfile = response.data[0] 
-     this.imageLink = "https://sfbserver.herokuapp.com/images/" + response.data[0].Image;
+     this.imageLink = `https://sfbserver.herokuapp.com - '${this.$store.state.emailUser}'/` + response.data[0].Image;
      console.log(this.listProfile)
     })
-  }
+  } 
+  
 };
 </script>

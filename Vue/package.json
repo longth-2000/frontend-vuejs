@@ -2,6 +2,7 @@
   "name": "demo_nodejs_vuejs",
   "version": "1.0.0",
   "scripts": {
+    "serve": "vue-cli-service serve",
     "client": "webpack-dev-server",
     "dev": "node build/dev-server.js",
     "start": "node app.js",

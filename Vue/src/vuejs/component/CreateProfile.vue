@@ -96,9 +96,9 @@ export default {
       formData.append("age",this.formdata.age)
       formData.append("level",this.formdata.level)
       this.axios
-        .post("http://localhost:5000/profile/create-profile" , formData )
+        .post("https://sfbserver.herokuapp.com/profile/create-profile" , formData )
         .then(response => {
-            /* this.message = response.data.message */
+            this.message = response.data.message 
             console.log(response.data)
         });
     },

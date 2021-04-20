@@ -4,7 +4,7 @@
       <form action="" method="post" v-on:submit.prevent="createProfile" enctype="multipart/form-data">
       <input type="file" name="fileUpload" id="image" accept="image/jpeg, image/png"/>
         <div class="form-group">
-          <label>Firstname</label>
+          <label>Họ</label>
           <input
             type="text"
             v-model="formdata.firstname"
@@ -15,7 +15,7 @@
           <div class="profileAlert">{{showAlert("Firstname")}}</div>
         </div>
         <div class="form-group">
-          <label>Lastname</label>
+          <label>Tên</label>
           <input
             type="text"
             v-model="formdata.lastname"
@@ -26,7 +26,7 @@
            <div class="profileAlert">{{showAlert("Lastname")}}</div>
         </div>
         <div class="form-group">
-          <label>Age</label>
+          <label>Tuổi</label>
           <input
             type="text"
             v-model="formdata.age"
@@ -35,6 +35,13 @@
             id="age"
           />
            <div class="profileAlert">{{showAlert("Age")}}</div>
+        </div>
+        <div class="form-group">
+          <label>Giới tính</label>
+          <input class="form-check-input" type="radio" value="Nam" name="sex" v-model="formdata.sex"/>
+          <label class="form-check-label">Nam</label>
+          <input class="form-check-input" type="radio" value="Nữ" name="sex" v-model="formdata.sex"/>
+          <label class="form-check-label">Nữ</label>
         </div>
         <div class="form-group">
           <label>Level</label>
@@ -95,6 +102,7 @@ export default {
       formData.append("lastname",this.formdata.lastname)
       formData.append("age",this.formdata.age)
       formData.append("level",this.formdata.level)
+      formData.append("sex", this.formdata.sex)
       this.axios
         .post("https://sfbserver.herokuapp.com/profile/create-profile" , formData )
         .then(response => {
@@ -110,6 +118,11 @@ export default {
         }
       });
       return object.message;
+    }
+  },
+  computed:{
+    getIndex(){
+      return this.$store.state.indexUser
     }
   }
 };

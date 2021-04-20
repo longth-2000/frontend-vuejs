@@ -1,9 +1,12 @@
 <template>
-     <router-link to="/profile/create-profile">Create my profile</router-link>
+  <div>
+    <router-link to="/profile/create-profile">Create my profile</router-link>
+  
+  </div>
 </template>
-<script>
-
-</script>
 <style>
 
 </style>
+<script>
+
+</script>

@@ -99,8 +99,8 @@ export default {
           } else {
             this.message = response.data.message;
             this.isActive = true
-          }
-          console.log(response.data);
+          } 
+         
         });
     },
     showError(errorType) {

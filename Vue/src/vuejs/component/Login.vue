@@ -3,7 +3,6 @@
     <div class="row">
       <div class="col-md-6">
         <h1>Đăng nhập</h1>
-        <!-- <button @click="handleSubmit">oke</button> -->
         <div class="form-group">
           <label>Email</label>
           <input
@@ -73,8 +72,7 @@ export default {
   methods: {
     Login() {
       this.axios.post("https://sfbserver.herokuapp.com", this.formdata).then(response => {
-        this.$store.commit("changeUserindex", response.data._id);
-        this.$store.commit("changeEmailUser", response.data.Email);
+        this.$store.commit("changeUserindex", response.data._id);//id của user khi đăng nhập
         /*this.message = response.data.message; */
         console.log(response.data);
       });

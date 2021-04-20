@@ -29,8 +29,7 @@ export default {
     this.axios.get(`https://sfbserver.herokuapp.com/profile/${this.$store.state.indexUser}`)
     .then(response => {
      this.listProfile = response.data[0] 
-     this.imageLink = "https://sfbserver.herokuapp.com/images/" + response.data[0].Image;
-     console.log(this.listProfile) 
+     this.imageLink = `https://sfbserver.herokuapp.com/images/upload/${this.$store.state.indexUser}/` + response.data[0].Image;
     })
   } 
   

@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     Login() {
-      this.axios.post("https://sfbserver.herokuapp.com", this.formdata).then(response => {
+      this.axios.post("http://localhost:5000", this.formdata).then(response => {
         this.$store.commit("changeUserindex", response.data._id);//id của user khi đăng nhập
         /*this.message = response.data.message; */
         console.log(response.data);

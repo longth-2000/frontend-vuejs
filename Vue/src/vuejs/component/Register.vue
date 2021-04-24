@@ -83,7 +83,7 @@ export default {
   methods: {
     register() {
       this.axios
-        .post("https://sfbserver.herokuapp.com/register", this.formdata)
+        .post("http://localhost:5000/register", this.formdata)
         .then(response => {
           if (
             response.data.state !== "successful" &&

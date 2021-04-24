@@ -1,22 +1,35 @@
 <template>
   <div>
     <div>
-      <label> Fullname : {{ listProfile.FirstName }} </label>
+      <label> Fullname : </label>{{ listProfile.FirstName }} {{ listProfile.LastName }}
       </br>
-      <label> Lastname: {{ listProfile.LastName }} </label>
     </div>
     <div>
-      <label>Age:{{listProfile.Age}}</label>
+      <label>Age:</label>{{listProfile.Age}}
     </div>
      <div>
-      <label>Level:{{listProfile.Level}}</label>
+      <label>Level:</label>{{listProfile.Level}}
+    </div>
+     <div>
+      <label>Địa chỉ</label>
+      <div>
+          <label>Tỉnh:</label> {{listProfile.Province}}  
+      </div>
+      <div>
+          <label>Huyện:</label> {{listProfile.District}}  
+      </div>
     </div>
     <div>
       <img v-bind:src="imageLink" />
     </div>
   </div>
 </template>
-<style></style>
+<style>
+img{
+  width: 200px;
+  height: 200px;
+}
+</style>
 <script>
 export default {
   data() {
@@ -26,11 +39,13 @@ export default {
     };
   },
   mounted() {
-    this.axios.get(`https://sfbserver.herokuapp.com/profile/${this.$store.state.indexUser}`)
+     this.axios.get(`http://localhost:5000/profile/${this.$route.params.id}` )
     .then(response => {
      this.listProfile = response.data[0] 
-     this.imageLink = `https://sfbserver.herokuapp.com/images/upload/${this.$store.state.indexUser}/` + response.data[0].Image;
-    })
+     this.imageLink = `http://localhost:5000/images/upload/${this.$route.params.id}/` + response.data[0].Image;
+     console.log( this.listProfile.Address.Province)
+    }) 
+    
   } 
   
 };

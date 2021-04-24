@@ -15,7 +15,7 @@ export const router = new VueRouter({
         {path: '/register', component:Register },
         {path:'/home', component:Home},
         {path: '/profile/create-profile', component:CreateProfile},
-       {path: `/profile`, component:Profile}, 
+        {path: `/profile/:id`, component:Profile}, 
         {path: '/trash', component:Trash}
     ]
 })

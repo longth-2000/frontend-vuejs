@@ -1,182 +1,99 @@
 <template>
   <div>
-    <router-link to="/profile/create-profile">Create my profile</router-link>
-    <form></form>
-    <div>
-      <label>Tìm kiếm </label>
-      <br />
-      <div class="form-group">
-        <label>Trình độ văn hóa</label>
-        <select
-          class="form-control"
-          id="sel1"
-          name="levelOption"
-          v-model="formData.levelOption"
-        >
-          <option>THCS</option>
-          <option>THPT</option>
-          <option>Đại học</option>
-          <option>Thạc sĩ</option>
-        </select>
+    <div class="home-screen-header">
+      <Header />
+    </div>
+    <div class="home-screen-content">
+      <div class="content-notifycation">
+        <Notifycation />
       </div>
-      <div class="form-group">
-        <label>Giới tính</label>
-        <select
-          class="form-control"
-          id="sel1"
-          name="sexOption"
-          v-model="formData.sexOption"
-        >
-          <option>Nam</option>
-          <option>Nữ</option>
-        </select>
+      <div class="content-search">
+        <Search />
       </div>
-      <div class="age">
-        <label>Tuổi</label>
-        <div id="age-form-control">
-          <select
-            class="form-control"
-            id="sel1"
-            name="ageOptionMin"
-            v-model="formData.ageOptionMin"
-          >
-            <option>19</option>
-            <option>20</option>
-            <option>21</option>
-            <option>22</option>
-          </select>
-          <select
-            class="form-control"
-            id="sel2"
-            name="ageOptionMax"
-            v-model="formData.ageOptionMax"
-          >
-            <option>19</option>
-            <option>20</option>
-            <option>21</option>
-            <option>22</option>
-          </select>
-        </div>
-      </div>
-      <div>
-        <label>Tỉnh</label>
-        <select
-          class="form-control"
-          id="province"
-          name="provinceOption"
-          v-model="formData.provinceOption"
-          @change="getDistrictInformation($event)"
-        >
-          <option
-            class="province-items"
-            v-for="provinces of listProvince"
-            v-bind:value="provinces.Title"
-          >
-            {{ provinces.Title }}
-          </option>
-        </select>
+      <div class="content-list">
+        <List />
       </div>
     </div>
-    <div class="form-group">
-      <button @click="search">search</button>
-    </div>
-    <div class="form-group" style="display:flex">
-      <form action="" method="post" v-on:submit.prevent="advancedSearch" style="display:flex">
-        <input
-          type="text"
-          placeholder="Tìm kiếm nâng cao"
-          class="form-control"
-          name="advancedSearch"
-          v-model="formSearch.advancedSearch"
-        />
-        <button >search</button>
-      </form>
-    </div>
-    <div class="information-user">
-      <template v-for="user in listUser">
-        <div>
-          <label> Họ: </label>
-          <span>{{ user.LastName }}</span>
-          <br />
-          <label> Tên: </label>
-          <span>{{ user.FirstName }}</span>
-          <br />
-          <label> Tuổi: </label>
-          <span>{{ user.Age }}</span>
-          <br />
-          <label> Giới tính : </label>
-          <span>{{ user.Sex }}</span>
-          <br />
-          <label> Trình độ học vấn : </label>
-          <span>{{ user.Level }}</span>
-          <br />
-          <img v-bind:src="image" />
-          <br />
-          <router-link v-bind:to="'/profile/' + user.Index">
-            Xem thông tin chi tiết
-          </router-link>
-        </div>
-      </template>
+    <div class="home-screen-footer">
+      <!--  <ChatScreen
+        v-if="isActive"
+        v-bind:class="{ active: this.$store.state.active }"
+        :room="this.$store.state.yourRoom.index"
+      /> -->
+      <ChatContainer style="margin-left:100px; margin-top:300px" />
     </div>
   </div>
 </template>
 <style>
-#age-form-control {
-  display: flex;
+.home-screen-header {
 }
-img {
-  width: 100px;
-  height: 100px;
+
+.home-screen-content {
+  width: 100%;
+  height: auto;
+  margin: -10px auto;
+}
+.content-notifycation {
+  width: 100%;
+  height: 150px;
+  background: #6f9562;
+}
+.content-search {
+  width: 80%;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 8px;
+  margin-top: -20px;
+  background: white;
+}
+.content-list {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.active {
+  display: none;
 }
 </style>
 <script>
+import Header from "./items/Header.vue";
+import Search from "./Search.vue";
+import List from "./List.vue";
+import Notifycation from "./Notifycation.vue";
+import ChatScreen from "./Chat/Chat.vue";
+import ChatContainer from "./Chat/ChatContainer.vue";
+import io from "socket.io-client";
+import { URL } from "./config/axios/constant";
 export default {
+  components: {
+    Header,
+    Search,
+    List,
+    Notifycation,
+    ChatScreen,
+    ChatContainer
+  },
+  mounted() {
+    /* this.axios.get("http://localhost:5000/profile/getByList").then(response => {
+      this.user = response.data;
+      console.log("hello");
+      console.log(this.user);
+      this.user.forEach(user => {
+        this.socket.emit("YOUR_ROOM", $cookies.get("token") + "-" + user.Index);
+        console.log($cookies.get("token") + "-" + user.Index);
+      });
+    }); */
+  },
+
   data() {
     return {
       formData: {},
-      formSearch:{},
-      listUser: [],
-      image: {},
-      listProvince: [],
-      listDistrict: []
+      user: [],
+      isActive: true,
+      socket:io(URL)
     };
   },
-  mounted() {
-    this.axios.get("http://localhost:5000/address/province").then(response => {
-      this.listProvince = response.data.LtsItem;
-      console.log(this.listProvince);
-    });
-  },
-  methods: {
-    search() {
-      this.axios
-        .post("http://localhost:5000/search", this.formData)
-        .then(response => {
-          this.listUser = response.data;
-          this.image = `http://localhost:5000/images/upload/${response.data[0].Index}/${response.data[0].Image}`;
-          console.log(this.image);
-          console.log(response.data);
-        });
-    },
-    advancedSearch() {
-      this.axios
-          .post("http://localhost:5000/search/advanced", this.formSearch)
-          .then(response => {
-            console.log(response.data)
-          })
-    },
-    getDistrictInformation(event) {
-      this.listProvince.forEach(items => {
-        if (items.Title == event.target.value) this.idProvince = items.ID;
-      });
-      this.axios
-        .get(
-          `http://localhost:5000/address/province/${this.idProvince}/district`
-        )
-        .then(response => {
-          this.listDistrict = response.data;
-        });
-    }
-  }
+  computed: {}
 };
 </script>

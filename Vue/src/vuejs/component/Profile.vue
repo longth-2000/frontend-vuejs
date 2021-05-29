@@ -1,52 +1,67 @@
 <template>
-  <div>
-    <div>
-      <label> Fullname : </label>{{ listProfile.FirstName }} {{ listProfile.LastName }}
-      </br>
+  <div class="profile-app">
+    <div class="app-header">
+      <Header />
     </div>
-    <div>
-      <label>Age:</label>{{listProfile.Age}}
-    </div>
-     <div>
-      <label>Level:</label>{{listProfile.Level}}
-    </div>
-     <div>
-      <label>Địa chỉ</label>
-      <div>
-          <label>Tỉnh:</label> {{listProfile.Province}}  
+    <div class="app-navbar">
+      <div class="menu">
+        <md-steppers>
+          <md-step id="first" md-label="Hồ sơ">
+            <div class="profile-frame">
+              <Information />
+            </div>
+          </md-step>
+
+          <md-step id="second" md-label="Ảnh">
+            <div class="profile-frame"></div>
+          </md-step>
+
+          <md-step id="third" md-label="Cập nhập hồ sơ">
+            <div class="profile-frame"></div>
+          </md-step>
+        </md-steppers>
       </div>
-      <div>
-          <label>Huyện:</label> {{listProfile.District}}  
-      </div>
-    </div>
-    <div>
-      <img v-bind:src="imageLink" />
     </div>
   </div>
 </template>
 <style>
-img{
-  width: 200px;
-  height: 200px;
+.profile-app {
+}
+.profile-app .md-stepper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.md-steppers-navigation {
+  padding-left: 10%;
+}
+.profile-app .profile-frame {
+  width: 800px;
+  height: auto;
+  border-radius: 10px;
+  background-color: white;
+  margin-left: 20px;
+  margin-top: 50px;
+  display: flex;
 }
 </style>
 <script>
+import EditProfile from "./Entity/Profile/editProfile.vue";
+import Information from "./Entity/Profile/informationProfile.vue";
+import Header from "./items/Header.vue";
 export default {
   data() {
     return {
       listProfile: {},
-      imageLink: "",
+      imageLink: ""
     };
   },
-  mounted() {
-     this.axios.get(`http://localhost:5000/profile/${this.$route.params.id}` )
-    .then(response => {
-     this.listProfile = response.data[0] 
-     this.imageLink = `http://localhost:5000/images/upload/${this.$route.params.id}/` + response.data[0].Image;
-     console.log( this.listProfile.Address.Province)
-    }) 
-    
-  } 
+  components: {
+    Information,
+    EditProfile,
+    Header
+  },
   
+  methods: {}
 };
 </script>

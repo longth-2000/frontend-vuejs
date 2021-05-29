@@ -1,107 +1,164 @@
 <template>
-  <div>
-    <div class="row">
-      <div class="col-md-6">
-        <h1>Register</h1>
-        <div class="form-group">
-          <label>Email</label>
-          <input
-            type="email"
-            v-model="formdata.email"
-            class="form-control"
-            name="email"
-            id="email"
-          />
-        </div>
-        <div class="errorRegister">{{ showError("Email") }}</div>
-        <div class="form-group">
-          <label>Username</label>
-          <input
-            type="text"
-            v-model="formdata.username"
-            class="form-control"
-            name="username"
-            id="user-name"
-          />
-        </div>
-        <div class="errorRegister">{{ showError("Username") }}</div>
-        <div class="form-group">
-          <label>Password</label>
-          <input
-            type="password"
-            v-model="formdata.password"
-            name="password"
-            class="form-control"
-            id="password"
-          />
-          <div class="errorRegister">{{ showError("Password") }}</div>
-        </div>
-        <div class="form-group">
-          <button class="btn btn-primary" @click="register">Đăng kí</button>
-          <span>{{ message }}</span>
-          <router-link
-            class="router"
-            v-bind:class="{ 'display-router': isActive }"
-            to="/"
-            >Login</router-link
-          >
-        </div>
+  <div class="app-login">
+    <div class="app-login-frame">
+      <img class="background-login" src="../assets/image/date.png" />
+      <div class="form">
+        <img class="logo" src="../assets/image/logo-1.png" />
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        />
+        <form action="" method="post" v-on:submit.prevent="register">
+          <md-field>
+            <label>Email</label>
+            <md-input
+              type="email"
+              name="email"
+              v-model="formdata.email"
+            ></md-input>
+            <md-icon class="fa fa-envelope-square"></md-icon>
+          </md-field>
+          <span class="error">{{ showError("Email") }}</span>
+          <md-field>
+            <label>Username</label>
+            <md-input
+              type="text"
+              name="username"
+              v-model="formdata.username"
+            ></md-input>
+            <md-icon class="fa fa-user"></md-icon>
+          </md-field>
+          <span class="error">{{ showError("Username") }}</span>
+          <md-field>
+            <label>Password</label>
+            <md-input
+              type="password"
+              name="password"
+              v-model="formdata.password"
+            ></md-input>
+          </md-field>
+          <span class="error">{{ showError("Password") }}</span>
+          <div class="button">
+            <md-button type="submit" class="md-raised md-primary"
+              >Register</md-button
+            >
+          </div>
+        </form>
+        <br />
       </div>
     </div>
   </div>
 </template>
-<style>
-.router {
-  display: none;
+<style lang="scss" scoped>
+.app-login {
+  background-image: url("../assets/image/background-image.png");
+  background-size: cover;
+  height: 1000px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.display-router {
-  display: inline;
+.app-login-frame {
+  width: 900px;
+  height: 506px;
+  background-color: white;
+  border-radius: 10px;
+  display: flex;
 }
-.register-success {
-  display: inline;
+.background-login {
+  width: 50%;
+  height: 100%;
+  object-fit: cover;
+}
+.app-login .form {
   margin-left: 50px;
+  margin-top: 10px;
 }
-.errorRegister {
+.app-login .form .logo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: -20px;
+}
+.app-login .form .error {
   color: red;
+  padding: 0;
+}
+.app-login .button {
+  margin: 20px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.app-login .button button {
+  width: 100%;
+  border-radius: 20px;
+}
+.md-field {
+  height: 0px;
+  width: 350px;
+  margin-bottom: 25px;
+}
+.md-button {
+  margin: auto;
+  width: 20px;
+}
+.app-login .register {
+  margin: 0 auto;
+  text-align: center;
+}
+.app-login .register .router {
+  color: crimson;
+  font-weight: bold;
 }
 </style>
 <script>
+import axiosConfig from "../component/config/axios/axiosConfig";
+import { API } from "./config/axios/api";
 export default {
   data() {
     return {
       formdata: {},
-      message: "",
+      message: false,
       errors: [
         {
           message: "",
           key: ""
         }
       ],
-      isActive: false
+      isActive: false,
+      isShowError: false,
+      messageAlert: ""
     };
   },
   methods: {
     register() {
-      this.axios
-        .post("http://localhost:5000/register", this.formdata)
-        .then(response => {
-          if (
-            response.data.state !== "successful" &&
-            response.data.state !== "existed"
-          ) {
-            const errorRegister = response.data.details;
-            errorRegister.forEach(element => {
-              this.errors.push({
-                message: element.message,
-                key: element.context.key
-              });
+      const api = API.USER.register();
+      const { endpoint, method } = api;
+      axiosConfig(endpoint, method, this.formdata).then(response => {
+        if (
+          response.data.state !== "successful" &&
+          response.data.state !== "existed"
+        ) {
+          this.isShowError = true;
+          const errorRegister = response.data.details;
+          errorRegister.forEach(element => {
+            this.errors.push({
+              message: element.message,
+              key: element.context.key
             });
+          });
+        } else {
+          if (response.data.state == "existed") {
+            alert("Tài khoản đã tồn tại");
           } else {
-            this.message = response.data.message;
-            this.isActive = true
-          } 
-         
-        });
+            this.$cookies.set("token", response.data.id);
+            alert("Đăng kí thành công");
+            this.$router.push("profile/create-profile");
+          }
+        }
+        console.log(response.data);
+      });
     },
     showError(errorType) {
       var object = {};
@@ -111,7 +168,10 @@ export default {
         }
       });
       return object.message;
+    },
+    alert() {
+      console.log(this.messageAlert);
     }
-  },
+  }
 };
 </script>

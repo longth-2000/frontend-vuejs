@@ -89,10 +89,10 @@
             <md-option value="No option">No option</md-option>
             <md-option
               v-for="provinces of listProvince"
-              v-bind:value="provinces.Title"
-              v-bind:key="provinces.Title"
+              v-bind:value="provinces.name"
+              v-bind:key="provinces.name"
             >
-              {{ provinces.Title }}
+              {{ provinces.name }}
             </md-option>
           </md-select>
         </md-field>
@@ -220,8 +220,8 @@ export default {
     const api = API.ADDRESS.province();
     const { endpoint, method } = api;
     axiosConfig(endpoint, method).then(response => {
-      this.listProvince = response.data.LtsItem;
-      console.log(this.listProvince);
+      this.listProvince = response.data.results;
+      console.log(this.listProvince); 
     });
   },
   methods: {
@@ -249,7 +249,7 @@ export default {
       });
       this.axios
         .get(
-          `http://localhost:5000/address/province/${this.idProvince}/district`
+          `https://sfbserver.herokuapp.com/address/province/${this.idProvince}/district`
         )
         .then(response => {
           this.listDistrict = response.data;

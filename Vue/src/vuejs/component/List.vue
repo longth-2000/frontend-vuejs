@@ -13,12 +13,7 @@
       <div class="avatar">
         <router-link :to="'/profile/' + users.Index">
           <img
-            :src="
-              'http://localhost:5000/images/upload/' +
-                users.Index +
-                '/' +
-                users.Image
-            "
+            :src="getURL + '/images/upload/' + users.Index + '/' + users.Image"
           />
         </router-link>
       </div>
@@ -71,6 +66,7 @@
 <script>
 import axiosConfig from "../component/config/axios/axiosConfig";
 import { API } from "./config/axios/api";
+import { URL } from "./config/axios/constant";
 export default {
   name: "List",
   data() {
@@ -80,7 +76,8 @@ export default {
       chatList: [],
       colorHeart: "red",
       reactList: [],
-      state: 0
+      state: 0,
+      URL: ""
     };
   },
 
@@ -101,7 +98,7 @@ export default {
       });
     },
     displayChat(index, name, image, state) {
-      this.state ++;
+      this.state++;
       this.$store.commit("changeYourRoom", {
         index: index,
         name: name,
@@ -111,6 +108,10 @@ export default {
     }
   },
   computed: {
+    getURL() {
+      this.URL = URL;
+      return this.URL;
+    },
     getlistUsers() {
       var list = this.$store.state.listUser;
       var listUser = list.length == 0 ? null : list;
@@ -137,7 +138,7 @@ export default {
 }
 .List-content-items {
   height: 366px;
-  width: 188px;
+  width: 210px;
   background: white;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   margin-left: 15px;

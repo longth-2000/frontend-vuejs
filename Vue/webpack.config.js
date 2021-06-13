@@ -2,6 +2,7 @@
 const path = require("path")
 // webpack.config.js
 module.exports = {
+  
   // This is the "main" file which should include all other modules
   entry: './src/main.js',
   // Where should the compiled file go?

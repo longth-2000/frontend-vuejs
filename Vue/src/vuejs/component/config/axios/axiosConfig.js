@@ -4,8 +4,8 @@ export default function axiosConfig(endpoint, method, data) {
     return axios({
         method: method,
         url: `${Config.URL}/${endpoint}`,
-        data:data
+        data: data,
     }).catch(error => {
         console.log(error)
-    })
+    }) 
 }

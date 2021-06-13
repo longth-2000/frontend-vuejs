@@ -7,7 +7,10 @@
 </template>
 
 <style>
+.container {
+  overflow-x: hidden;
 
+}
 </style>
 
 <script>

@@ -8,12 +8,7 @@
       >
         <div class="image">
           <img
-            :src="
-              'http://localhost:5000/images/upload/' +
-                users.Index +
-                '/' +
-                users.Image
-            "
+            :src="getURL + '/images/upload/' + users.Index + '/' + users.Image"
           />
         </div>
         <div class="information">
@@ -36,9 +31,9 @@
             </div>
           </div>
           <div style="margin-top:5%">
-               <router-link :to="'/profile/' + users.Index" style="color:red"
+            <router-link :to="'/profile/' + users.Index" style="color:red"
               >Xem thông tin chi tiết</router-link
-            > 
+            >
           </div>
         </div>
         <div class="icon">
@@ -78,6 +73,7 @@
 <script>
 import axiosConfig from "../config/axios/axiosConfig";
 import { API } from "../config/axios/api";
+import { URL } from "../config/axios/constant";
 export default {
   name: "Liked",
   props: {
@@ -89,7 +85,8 @@ export default {
       listIndex: [],
       conditionCheck: "",
       active: false,
-      data: ""
+      data: "",
+      URL: ""
     };
   },
   mounted() {
@@ -121,8 +118,7 @@ export default {
           );
           this.listViewed = profiles;
         });
-      }); 
-      
+      });
   },
   methods: {
     setActive(data) {
@@ -130,21 +126,25 @@ export default {
       this.data = data;
     },
     onConfirm(id) {
-      this.axios
-        .delete("http://localhost:5000/react/delete", {
-          data: { ID: id }
-        })
-        .then(response => {
-          this.listViewed.forEach((Element, index) => {
-            if (Element.Index == id) {
-              this.listViewed.splice(index, 1);
-            }
-          });
+      const api = API.REACT.delete();
+      axiosConfig(api.endpoint, api.method, {
+        ID: id
+      }).then(response => {
+        this.listViewed.forEach((Element, index) => {
+          if (Element.Index == id) {
+            this.listViewed.splice(index, 1);
+          }
         });
+      });
     },
     onCancel() {}
   },
-  computed: {}
+  computed: {
+    getURL() {
+      this.URL = URL;
+      return this.URL;
+    }
+  }
 };
 </script>
 <style>

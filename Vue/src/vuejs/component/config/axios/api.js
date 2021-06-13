@@ -23,8 +23,12 @@ export const API = {
             method: "GET"
         }),
         editProfile: (idUser) => ({
-            endpoint:`profile/edit/${idUser}`,
-            method:"PUT"
+            endpoint: `profile/edit/${idUser}`,
+            method: "PUT"
+        }),
+        changeAvatar: (idUser) => ({
+            endpoint: `profile/change-avatar/${idUser}`,
+            method:"POST"
         })
     },
     ADDRESS: {
@@ -50,7 +54,7 @@ export const API = {
             endpoint: `react/${action}/${idUser}`,
             method: "GET"
         }),
-        
+
     },
     SEARCH: {
         basicSearch: () => ({
@@ -60,6 +64,20 @@ export const API = {
         advanceSearch: () => ({
             endpoint: "search/advanced",
             method: "POST"
+        })
+    },
+    CHAT: {
+        insertContent: () => ({
+            endpoint: "chat",
+            method: "POST"
+        }),
+        displayContent: () => ({
+            endpoint: "chat/display",
+            method:"GET"
+        }),
+        displayContentByID: (id) => ({
+            endpoint:`chat/display/${id}`,
+            method:"GET"
         })
     }
 }

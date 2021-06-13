@@ -11,7 +11,7 @@
       <md-menu md-direction="bottom-start">
         <md-button md-menu-trigger>
           <router-link
-            :to="'/profile/edit/' + $cookies.get('token')"
+            to="/home"
             class="router-profile second-choice"
           >
             <md-icon class="fa fa-home"></md-icon>
@@ -31,27 +31,39 @@
         </md-button>
       </md-menu>
       <md-menu md-direction="bottom-start">
-        <md-button md-menu-trigger
-          ><router-link to="/" class="router-profile second-choice">
-            <md-icon class="fa fa-power-off"></md-icon>
-            <span>Đăng xuất</span>
-          </router-link>
+        <md-button md-menu-trigger @click="logout"
+          ><!-- <router-link to="/" class="router-profile second-choice"> -->
+          <md-icon class="fa fa-power-off"></md-icon>
+          <span>Đăng xuất</span>
+          <!-- </router-link> -->
         </md-button>
       </md-menu>
     </div>
   </div>
 </template>
 <script>
+import io from "socket.io-client";
+import { URL } from "../config/axios/constant";
 export default {
   name: "Header",
-  methods: {}
+  data(){
+    return{
+     socket:io(URL)
+    }
+  },
+  methods: {
+    logout() {
+      this.socket.emit("offline", $cookies.get("token"));
+      this.$router.push("/")
+    }
+  }
 };
 </script>
 <style>
 .header-website {
+  width: 100%;
   display: flex;
   background-color: #bbd5b0;
-
 }
 .header-website .logo {
   flex: 4;

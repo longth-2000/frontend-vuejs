@@ -3,14 +3,21 @@
     <div class="notify-content">
       <div class="information">
         <div class="image">
-          <img
-            :src="
-              URL+'/images/upload/' +
-                listUser.Index +
-                '/' +
-                listUser.Image
-            "
-          />
+          <img id="image" :src="this.$store.state.image" />
+          <div class="upload-image" id="change-avatar" @click="showModal">
+            <p>Thay đổi avatar</p>
+          </div>
+          <modal
+            :width="1000"
+            :height="auto"
+            :scrollable="true"
+            name="example"
+            class="example"
+          >
+            <div>
+              <Cropper :modal="this.$modal"  />
+            </div>
+          </modal>
         </div>
         <div class="name">
           <h3>Chào {{ getUser }}</h3>
@@ -62,7 +69,7 @@
               >
               <span>{{ likedUsers }}</span>
             </div>
-            <div class="view reaction-view">
+            <!-- <div class="view reaction-view">
               <router-link to="/">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -77,12 +84,11 @@
                 <md-tooltip md-direction="bottom">Hồ sơ đã xem</md-tooltip>
               </router-link>
               <span>2</span>
-            </div>
-            <div class="message reaction-view">
+            </div> -->
+            <div class="message reaction-view" @click="displayChatFrame">
               <md-icon class="fa fa-comment md-size-2x"></md-icon>
               <md-tooltip md-direction="bottom">Tin nhắn</md-tooltip>
             </div>
-
           </div>
         </div>
       </div>
@@ -91,18 +97,21 @@
 </template>
 <script>
 import Chart from "./Chart.vue";
-import {URL} from "./config/axios/constant"
+import { URL } from "./config/axios/constant";
+import Cropper from "./items/Cropper.vue";
 export default {
   name: "Notifycation",
   components: {
-    Chart
+    Chart,
+    Cropper
   },
   data() {
     return {
       listUser: {},
       nameUser: "",
       likedUsers: null,
-      isLikedUsers: null
+      isLikedUsers: null,
+      image: ""
     };
   },
   computed: {
@@ -110,18 +119,24 @@ export default {
       this.nameUser = this.$store.state.nameUser;
       return this.nameUser;
     }
+   
   },
   methods: {
-    
+    showModal() {
+      this.$modal.show("example");
+    },
+    hideModal() {},
+    displayChatFrame() {
+      var displayChatFrame = this.$store.state.displayChatFrame;
+      if (displayChatFrame == false) displayChatFrame = true;
+      else displayChatFrame = false;
+      this.$store.commit("changeDisplayChatFrame", displayChatFrame);
+    }
   },
   mounted() {
     let one = `${URL}/profile/${$cookies.get("token")}`;
-    let two = `${URL}/react/liked/${$cookies.get(
-      "token"
-    )}`;
-    let three = `${URL}/react/isliked/${$cookies.get(
-      "token"
-    )}`;
+    let two = `${URL}/react/liked/${$cookies.get("token")}`;
+    let three = `${URL}/react/isliked/${$cookies.get("token")}`;
     const requestOne = this.axios.get(one);
     const requestTwo = this.axios.get(two);
     const requestThree = this.axios.get(three);
@@ -131,6 +146,8 @@ export default {
         this.$store.commit("changeNameUser", this.listUser.FullName);
         this.likedUsers = responses[1].data.length;
         this.isLikedUsers = responses[2].data.length;
+        this.image = `${URL}/images/upload/${this.listUser.Index}/${this.listUser.Image}`;
+        this.$store.commit("changeImage",this.image)
       })
     );
   }
@@ -151,7 +168,7 @@ export default {
   flex: 3;
   display: flex;
 }
-.notify-content .information img {
+.notify-content .information #image {
   display: block;
   width: 100px;
   height: 100px;
@@ -169,7 +186,7 @@ export default {
 .notify-content .information .name h3 {
   font-weight: 400;
 }
-.notify-content .information .name .upload-image {
+.notify-content .information .upload-image {
   width: 200px;
   height: 30px;
   background: #bbd5b0;
@@ -181,6 +198,18 @@ export default {
   justify-content: space-around;
   font-weight: 300;
 }
+.notify-content .information #change-avatar {
+  width: 110px;
+  height: 24px;
+  margin-left: 6px;
+  margin-top: 10px;
+}
+.notify-content .information .vm--modal {
+  height: auto !important;
+  top: 10px !important;
+}
+.notify-content .information .avatar-cropper {
+}
 .notify-content .information .name .upload-image .md-icon {
   margin: 0;
 }
@@ -191,7 +220,7 @@ export default {
   width: 100%;
   height: 100%;
   display: flex;
-  margin-left: 20%;
+  margin-left: 40%;
 }
 .notify-content .reaction .reaction-view {
   width: 102px;

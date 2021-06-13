@@ -49,7 +49,8 @@ export default {
   },
   props: {
     frame: Object,
-    content: Object
+    content: Object,
+    contentDatabase: Array
   },
 
   mounted() {
@@ -58,25 +59,61 @@ export default {
     const { endpoint, method } = api;
     axiosConfig(endpoint, method).then(response => {
       this.myself.name = response.data[0].FullName;
-      this.myself.profilePicture =
-        `${URL}/images/upload/${$cookies.get("token")}/` +
-        response.data[0].Image;
+      this.profilePicture = response.data[0].Image;
+      this.myself.profilePicture = `${URL}/images/upload/${$cookies.get(
+        "token"
+      )}/${response.data[0].Image}`;
     });
-    if (this.content.content != null) {
-      this.participants[0].profilePicture = this.content.from.image;
+    this.contentDatabase.forEach(element => {
+      this.participants[0].profilePicture = `${URL}/images/upload/${element.from.index}/${element.from.image}`;
+      if (
+        element.from.index == this.frame.index &&
+        element.to.index == $cookies.get("token")
+      ) {
+        this.messages.push({
+          content: element.content,
+          myself: false,
+          participantId: 2,
+          timestamp: {
+            year: element.timestamp.year,
+            month: element.timestamp.month,
+            day: element.timestamp.day,
+            hour: element.timestamp.hour,
+            minute: element.timestamp.minute,
+            millisecond: element.timestamp.millisecond
+          },
+          type: "text"
+        });
+      }
+      if (
+        element.to.index == this.frame.index &&
+        element.from.index == $cookies.get("token")
+      ) {
+        this.messages.push({
+          content: element.content,
+          myself: true,
+          participantId: 1,
+          timestamp: {
+            year: element.timestamp.year,
+            month: element.timestamp.month,
+            day: element.timestamp.day,
+            hour: element.timestamp.hour,
+            minute: element.timestamp.minute,
+            millisecond: element.timestamp.millisecond
+          },
+          type: "text"
+        });
+      }
+    });
+    if (
+      this.content.content != null &&
+      this.frame.index == this.content.from.index
+    ) {
+      this.participants[0].profilePicture = `${URL}/images/upload/${this.content.from.index}/${this.content.from.image}`;
       this.messages.push({
         content: this.content.content,
         myself: false,
         participantId: 2,
-        timestamp: {
-          year: 2019,
-          month: 3,
-          day: 5,
-          hour: 20,
-          minute: 10,
-          second: 3,
-          millisecond: 123
-        },
         type: "text"
       });
     }
@@ -85,15 +122,6 @@ export default {
         content: data,
         myself: true,
         participantId: 1,
-        timestamp: {
-          year: 2019,
-          month: 3,
-          day: 5,
-          hour: 20,
-          minute: 10,
-          second: 3,
-          millisecond: 123
-        },
         type: "text"
       });
     });
@@ -104,6 +132,7 @@ export default {
       name: "",
       from: "",
       to: {},
+      profilePicture: "",
       visible: true,
       socket: io(URL),
       formData: "",
@@ -117,8 +146,7 @@ export default {
       myself: {
         name: "",
         id: 1,
-        profilePicture:
-          "https://lh3.googleusercontent.com/-G1d4-a7d_TY/AAAAAAAAAAI/AAAAAAAAAAA/AAKWJJPez_wX5UCJztzEUeCxOd7HBK7-jA.CMID/s83-c/photo.jpg"
+        profilePicture: ""
       },
       messages: [],
       chatTitle: "Khung chat",
@@ -170,7 +198,7 @@ export default {
         }
       },
       timestampConfig: {
-        format: "HH:mm",
+        format: "dd/LL/yy hh:mm",
         relative: false
       },
 
@@ -198,24 +226,21 @@ export default {
   },
   computed: {},
   watch: {
-    frame() {
-      this.participants[0].name = this.frame.name;
-    },
     content() {
       if (this.frame.index == this.content.from.index) {
-        this.participants[0].profilePicture = this.content.from.image;
+        this.participants[0].profilePicture = `${URL}/images/upload/${this.content.from.index}/${this.content.from.image}`;
         this.messages.push({
           content: this.content.content,
           myself: false,
           participantId: 2,
           timestamp: {
-            year: 2019,
-            month: 3,
-            day: 5,
-            hour: 20,
-            minute: 10,
-            second: 3,
-            millisecond: 123
+            year: this.content.timestamp.year,
+            month: this.content.timestamp.month + 1,
+            day: this.content.timestamp.day,
+            hour: this.content.timestamp.hour,
+            minute: this.content.timestamp.minute,
+            second: this.content.timestamp.second,
+            millisecond: this.content.timestamp.millisecond
           },
           type: "text"
         });
@@ -233,6 +258,7 @@ export default {
       }, 1000);
     },
     onMessageSubmit(message) {
+      var date = new Date();
       var properties_content = Object.keys(this.content);
       if (properties_content.length != 0) {
         var content = {
@@ -241,25 +267,51 @@ export default {
           image: this.content.from.image
         };
       }
+      console.log(this.content);
       var properties = Object.keys(this.$store.state.yourRoom);
-      this.to = properties.length === 0 ? content : this.frame;
-      this.socket.emit("SEND_MESSAGE_TO_FRIEND", {
+      if (properties_content.length === 0) {
+        this.to = this.frame;
+      } else {
+        if(this.frame.index  === content.index){
+          this.to = content
+        }
+        else{
+          this.to = this.frame
+        }
+      }
+      var object = {
         from: {
           index: $cookies.get("token"),
           name: this.myself.name,
-          image: this.myself.profilePicture
+          image: this.profilePicture
         },
         to: {
           index: this.to.index,
           name: this.to.name,
           image: this.to.image
         },
+        timestamp: {
+          year: date.getFullYear(),
+          month: date.getMonth(),
+          day: date.getDate(),
+          hour: date.getHours(),
+          minute: date.getMinutes(),
+          second: date.getSeconds(),
+          millisecond: date.getMilliseconds()
+        },
         room: $cookies.get("token") + "-" + this.to.index,
         content: message.content
-      });
+      };
+      this.socket.emit("SEND_MESSAGE_TO_FRIEND", object);
       this.socket.emit("SEND_MESSAGE_TO_HOST", message.content);
+      const api = API.CHAT.insertContent();
+      const { endpoint, method } = api;
+      axiosConfig(endpoint, method, object).then(response => {
+        console.log(response);
+      });
     },
     onClose() {
+      console.log(this.frame.index);
       var array = this.$store.state.participants;
       array = array.filter(items => items.index != this.frame.index);
       this.$store.commit("changeParticipants", array);
@@ -312,7 +364,6 @@ export default {
 }
 
 .chat-container {
-  display: flex;
   align-items: center;
   justify-content: center;
   background: rgb(247, 243, 243);

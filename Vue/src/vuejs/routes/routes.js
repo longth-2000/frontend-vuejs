@@ -10,7 +10,7 @@ import editProfile from "../component/Entity/Profile/editProfile.vue"
 import ChatContainer from "../component/Chat/ChatContainer.vue"
 import Trash from "../component/trash/Trash.vue"
 import Trash1 from "../component/trash/Trash1.vue"
-
+import Cropper from "../component/items/Cropper.vue"
 import { BootstrapVue } from 'bootstrap-vue'
 Vue.use(VueRouter)
 Vue.use(BootstrapVue)

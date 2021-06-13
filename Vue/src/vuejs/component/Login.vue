@@ -8,46 +8,33 @@
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
         />
-        <form action="" method="post" v-on:submit.prevent="Login">
-          <div>
-            <md-field>
-              <label>Email</label>
-              <md-input
-                type="email"
-                name="email"
-                v-model="formdata.email"
-              ></md-input>
-              <md-icon class="fa fa-envelope-square"></md-icon>
-            </md-field>
-          </div>
-          <div>
-            <md-field>
-              <label>Password</label>
-              <md-input
-                type="password"
-                name="password"
-                v-model="formdata.password"
-              ></md-input>
-            </md-field>
-          </div>
-          <router-link to="/">Forgot your password</router-link>
-          <div class="button">
-            <!--  <md-dialog-confirm
-              v-if="isAlert"
-              :md-active.sync="active"
-              :md-content="
-                isContinued ? 'Đăng nhập thành công' : 'Tài khoản không tồn tại'
-              "
-              :md-confirm-text="isContinued ? 'Continue' : ''"
-              :md-cancel-text="isContinued ? '' : 'Cancel'"
-              @md-cancel="onCancel"
-              @md-confirm="onConfirm"
-            /> -->
-            <md-button class="md-raised md-primary" type="submit"
-              >Login</md-button
-            >
-          </div>
-        </form>
+        <div>
+          <md-field>
+            <label>Email</label>
+            <md-input
+              type="email"
+              name="email"
+              v-model="formdata.email"
+            ></md-input>
+            <md-icon class="fa fa-envelope-square"></md-icon>
+          </md-field>
+        </div>
+        <div>
+          <md-field>
+            <label>Password</label>
+            <md-input
+              type="password"
+              name="password"
+              v-model="formdata.password"
+            ></md-input>
+          </md-field>
+        </div>
+        <router-link to="/">Forgot your password</router-link>
+        <div class="button">
+          <md-button class="md-raised md-primary" @click="Login"
+            >Login</md-button
+          >
+        </div>
         <br />
         <div class="register">
           Don't have account?
@@ -62,6 +49,7 @@
   background-image: url("../assets/image/background-image.png");
   background-size: cover;
   height: 1000px;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -130,7 +118,6 @@ export default {
     return {
       formdata: {},
       message: "",
-      isActive: false,
       active: false,
       isContinued: true,
       isAlert: false,
@@ -148,16 +135,29 @@ export default {
       const api = API.USER.login();
       const { endpoint, method } = api;
       axiosConfig(endpoint, method, this.formdata).then(response => {
-        var token = VueJwtDecode.decode(response.data.index);
-        this.$cookies.set("token", token.index);
-/*         this.$store.commit("changeMyRoom", token.index);
- */        console.log(response.data);
-        alert("Đăng nhập thành công");
-        this.$router.push("home");
+        if (response.data.status == true) {
+          var token = VueJwtDecode.decode(response.data.index);
+          this.$cookies.set("token", token.index);
+          this.$fire({
+            title: "Success",
+            text: "Login sucessfully",
+            type: "success"
+          }).then(r => {
+            this.$router.push("home");
+          });
+        } else {
+          this.$fire({
+            title: "Failed",
+            text: "Incrorrect password or email",
+            type: "error"
+          }).then(r => {
+            console.log("failed")
+          });
+        }
       });
     },
     onConfirm() {
-      this.$router.push("home");
+      this.$alert("Hello Vue Simple Alert.");
     },
     onCancel() {},
     setPassword(value) {

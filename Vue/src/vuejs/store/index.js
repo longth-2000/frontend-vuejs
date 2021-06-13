@@ -11,10 +11,11 @@ export default new Vuex.Store({
         user: "",
         myRoom: "",
         yourRoom: {},
-        participants: []
+        participants: [],
+        displayChatFrame: true,
+        image: "",
     },
     getters: {
-
     },
     mutations: {
         changeUserindex(state, indexUser) {
@@ -43,6 +44,12 @@ export default new Vuex.Store({
         },
         changeParticipants(state, participants) {
             state.participants = participants
+        },
+        changeDisplayChatFrame(state, displayChatFrame) {
+            state.displayChatFrame = displayChatFrame
+        },
+        changeImage(state, image) {
+            state.image = image
         }
     },
 })

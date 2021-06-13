@@ -1,51 +1,60 @@
 <template>
   <div class="chat-list">
     <div v-for="(frames, index) in ChatUserList" :key="index">
-      <Chat :frame="frames" :content="contentChat" />
+      <Chat
+        :frame="frames"
+        :content="contentChat"
+        :contentDatabase="contentDatabase"
+        class="chatItems"
+      />
     </div>
-    <!-- <button @click="a">oke</button> -->
   </div>
 </template>
 <script>
 import Chat from "./Chat.vue";
 import { URL } from "../config/axios/constant";
 import io from "socket.io-client";
+import axiosConfig from "../config/axios/axiosConfig";
+import { API } from "../config/axios/api";
 export default {
   components: {
     Chat
   },
   mounted() {
-    this.axios.get("http://localhost:5000/profile/getByList").then(response => {
+    
+    const apiFirst = API.PROFILE.getProfileByArray();
+    axiosConfig(apiFirst.endpoint, apiFirst.method).then(response => {
       this.user = response.data;
       this.user.forEach(user => {
         this.socket.emit("YOUR_ROOM", $cookies.get("token") + "-" + user.Index);
       });
     });
+    const apiSecond = API.CHAT.displayContent();
+    axiosConfig(apiSecond.endpoint, apiSecond.method).then(response => {
+      this.contentDatabase = response.data;
+      console.log(this.contentDatabase);
+    });
     this.socket.on("MESSAGE_TO_CLIENT", data => {
-      const participants = this.addChatFrame;
-      var object = {
-        index: data.from.index,
-        name: data.from.name,
-        image: data.from.image
-      };
-      console.log(object);
-      participants.forEach(element => {
-        if (element.index != "null") {
-          this.clientList.push(element.index);
-        }
-      });
-      if (!this.clientList.includes(object.index) && object.index != null) {
-        participants.push(object);
+      const participants = this.$store.state.participants;
+      if (
+        participants.length == 0 ||
+        !participants.some(participant => participant.index == data.from.index)
+      ) {
+        participants.push({
+          index: data.from.index,
+          name: data.from.name,
+          image: data.from.image
+        });
       }
       this.contentChat = data;
     });
+
+   
   },
   data() {
     return {
-      ChatList: [],
-      indexList: [],
-      clientList: [],
       contentChat: {},
+      contentDatabase: [],
       state: 0,
       UserList: [],
       socket: io(URL)
@@ -65,7 +74,6 @@ export default {
   watch: {
     setState() {
       const { index, name, image, state } = this.$store.state.yourRoom;
-      console.log(index);
       const participants = this.$store.state.participants;
       if (
         participants.length == 0 ||
@@ -80,15 +88,14 @@ export default {
       this.$store.commit("changeParticipants", participants);
     }
   },
-  methods: {
-    a() {
-      console.log(this.ChatUserList);
-    }
-  }
+  methods: {}
 };
 </script>
 <style>
 .chat-list {
   display: flex;
+}
+.chatItems {
+  margin-left: 20px;
 }
 </style>

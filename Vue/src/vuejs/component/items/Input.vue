@@ -9,8 +9,10 @@
               <md-field>
                 <label>Nhập họ và tên</label>
                 <md-input name="fullname" v-model="type"></md-input>
-              </md-field></div
-          ></md-table-cell>
+              </md-field>
+              <span class="error">{{ showError("Fullname") }}</span>
+            </div></md-table-cell
+          >
         </md-table-row>
         <md-table-row id="age-row">
           <md-table-cell class="profile-items-title">Tuổi</md-table-cell>
@@ -38,30 +40,36 @@
                     id="province"
                     name="province"
                     v-model="province"
-                    @md-selected="getDistrictInformation($event)"
+                    @md-selected="getDistrictInformation($event, 'province')"
                   >
                     <md-option
                       class="province-items"
                       v-for="provinces of listProvince"
-                      v-bind:value="provinces.Title"
-                      v-bind:key="provinces.Title"
-                      >{{ provinces.Title }}</md-option
+                      v-bind:value="provinces.name"
+                      v-bind:key="provinces.name"
+                      >{{ provinces.name }}</md-option
                     >
                   </md-select>
                 </md-field>
+                <span class="error">{{ showError("Province") }}</span>
               </div>
               <div class="md-layout-item">
                 <md-field id="district">
                   <label for="district">Quận/Huyện</label>
-                  <md-select v-model="district" name="district">
+                  <md-select
+                    v-model="district"
+                    name="district"
+                    @md-selected="getDistrictInformation($event, 'district')"
+                  >
                     <md-option
                       v-for="districts of listDistrict"
-                      v-bind:value="districts.Title"
-                      v-bind:key="districts.Title"
-                      >{{ districts.Title }}</md-option
+                      v-bind:value="districts.name"
+                      v-bind:key="districts.name"
+                      >{{ districts.name }}</md-option
                     >
                   </md-select>
                 </md-field>
+                <span class="error">{{ showError("Districts") }}</span>
               </div>
             </div>
           </md-table-cell>
@@ -72,8 +80,9 @@
             ><div class="sex-user">
               <md-radio v-model="radio" value="Nam">Nam</md-radio>
               <md-radio v-model="radio" value="Nữ">Nữ</md-radio>
-            </div></md-table-cell
-          >
+            </div>
+            <span class="error">{{ showError("Sex") }}</span>
+          </md-table-cell>
         </md-table-row>
         <md-table-row>
           <md-table-cell class="profile-items-title"
@@ -91,6 +100,7 @@
                   <md-option value="Tiến sĩ">Tiến sĩ</md-option>
                 </md-select>
               </md-field>
+              <span class="error">{{ showError("Level") }}</span>
             </div></md-table-cell
           >
         </md-table-row>
@@ -127,7 +137,15 @@ export default {
   },
   data() {
     return {
+      errors: [
+        {
+          message: "",
+          key: ""
+        }
+      ],
+      state: "",
       province: "",
+      districtItems: "",
       district: "",
       level: "",
       listProvince: [],
@@ -148,8 +166,7 @@ export default {
     const api = API.ADDRESS.province();
     const { endpoint, method } = api;
     axiosConfig(endpoint, method).then(response => {
-      this.listProvince = response.data.LtsItem;
-      console.log(response.data.LtsItem);
+      this.listProvince = response.data.results;
     });
   },
   computed: {
@@ -170,14 +187,26 @@ export default {
     }
   },
   methods: {
-    getDistrictInformation(event) {
+    showError(errorType) {
+      var object = {};
+      this.errors.forEach(error => {
+        if (error.key == errorType) {
+          object = error;
+        }
+      });
+      return object.message;
+    },
+    getDistrictInformation(event, state) {
       this.listProvince.forEach(items => {
-        if (items.Title == event) this.idProvince = items.ID;
+        if (items.name == event) this.idProvince = items.code;
       });
       const api = API.ADDRESS.district(this.idProvince);
       const { endpoint, method } = api;
       axiosConfig(endpoint, method).then(response => {
-        this.listDistrict = response.data;
+        this.listDistrict = response.data.results;
+        if (state == "district") {
+          this.districtItems = event;
+        }
       });
     },
     handleAction() {
@@ -185,27 +214,40 @@ export default {
       else this.updateProfile();
     },
     updateProfile() {
-      const api = API.PROFILE.editProfile($cookies.get("token"));
-      const { endpoint, method } = api;
-      var formData = new FormData();
-      formData.append("Age", this.value);
-      formData.append("Province", this.province);
-      formData.append("District", this.district);
-      formData.append("Level", this.level);
-      formData.append("Sex", this.radio);
-      formData.append("FullName", this.type);
-      axiosConfig(endpoint, method, formData).then(response => {
-        this.$store.state.listProfile = {
-          FullName: this.type,
-          Sex: this.radio,
-          Province: this.province,
-          District: this.district,
-          Level: this.level,
-          Age: this.value
-        };
-        this.$store.state.nameUser = this.type;
-      });
-      this.active = true;
+      if (
+        this.districtItems != "" &&
+        !this.listDistrict.some(
+          district => district.name === this.districtItems
+        )
+      ) {
+        this.$alert(
+          "Tỉnh và huyện không không khớp",
+          "Cảnh báo",
+          "error"
+        ).then(() => console.log("Closed"));
+      } else {
+        const api = API.PROFILE.editProfile($cookies.get("token"));
+        const { endpoint, method } = api;
+        var formData = new FormData();
+        formData.append("Age", this.value);
+        formData.append("Province", this.province);
+        formData.append("District", this.district);
+        formData.append("Level", this.level);
+        formData.append("Sex", this.radio);
+        formData.append("FullName", this.type);
+        axiosConfig(endpoint, method, formData).then(response => {
+          this.$store.state.listProfile = {
+            FullName: this.type,
+            Sex: this.radio,
+            Province: this.province,
+            District: this.district,
+            Level: this.level,
+            Age: this.value
+          };
+          this.$store.state.nameUser = this.type;
+        });
+        this.active = true;
+      }
     },
     createProfile() {
       const api = API.PROFILE.createProfile();
@@ -217,13 +259,28 @@ export default {
       formData.append("Level", this.level);
       formData.append("Sex", this.radio);
       formData.append("FullName", this.type);
-       formData.append("fileUpload", this.image); 
-     
+      formData.append("cookie", $cookies.get("token"));
+      formData.append("fileUpload", this.image);
       axiosConfig(endpoint, method, formData).then(response => {
-        this.message = response.data.message;
-        alert(this.message);
-        this.$router.push("/home");  
-        console.log(response.data)
+        console.log(response.data);
+        if (response.data.state == true) {
+          this.message = response.data.message;
+          this.$fire({
+            title: "Success",
+            text: this.message,
+            type: "success"
+          }).then(r => {
+            this.$router.push("/home");
+          });
+        } else {
+          const errorProfile = response.data.details;
+          errorProfile.forEach(element => {
+            this.errors.push({
+              message: element.message,
+              key: element.context.key
+            });
+          });
+        }
       });
     }
   },
@@ -238,8 +295,11 @@ export default {
 <style>
 .input-form {
   width: 100%;
-
   background: white;
+}
+.input-form .error {
+  color: red;
+  padding: 0px;
 }
 .input-form .md-table .md-table-row {
   height: 100px;

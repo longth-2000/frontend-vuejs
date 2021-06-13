@@ -2,7 +2,7 @@
   <div class="profile-information-content">
     <div class="profile-image">
       <div class="profile-image-frame">
-        <div><img :src="imageLink" alt="Avatar" /></div>
+        <div><img :src="imageLink"  /></div>
         <div class="profile-image-title">
           <label>{{ listProfile.FullName }} </label>
         </div>
@@ -44,6 +44,7 @@
 <script>
 import axiosConfig from "../../config/axios/axiosConfig";
 import { API } from "../../config/axios/api";
+import {URL} from "../../config/axios/constant"
 export default {
   name: "Information",
   data() {
@@ -59,7 +60,7 @@ export default {
     axiosConfig(endpoint, method).then(response => {
       this.$store.commit("changeListProfile", response.data[0]);
       this.imageLink =
-        `http://localhost:5000/images/upload/${this.$route.params.id}/` +
+        `${URL}/images/upload/${this.$route.params.id}/` +
         response.data[0].Image;
     });
   },
@@ -105,9 +106,9 @@ export default {
   text-align: center;
   font-size: 18px;
 }
-.profile-image img {
+.profile-image .profile-image-frame img {
   width: 150px;
-  height: 150px;
+  height: 150px ;
   display: block;
   margin-left: auto;
   margin-right: auto;

@@ -1,26 +1,27 @@
 <template>
   <div>
-    <div class="home-screen-header">
-      <Header />
-    </div>
-    <div class="home-screen-content">
-      <div class="content-notifycation">
-        <Notifycation />
+    <div style="height:3000px">
+      <div class="home-screen-header">
+        <Header />
       </div>
-      <div class="content-search">
-        <Search />
+      <div class="home-screen-content">
+        <div class="content-notifycation">
+          <Notifycation id="notifycation" />
+          <ChatFrame
+            id="chatframe"
+            v-bind:class="{ isActive: this.$store.state.displayChatFrame }"
+          />
+        </div>
+        <div class="content-search">
+          <Search id="search" />
+        </div>
+        <div class="content-list">
+          <List />
+        </div>
+        <div class="content-chat">
+          <ChatContainer style="margin-left:100px" />
+        </div>
       </div>
-      <div class="content-list">
-        <List />
-      </div>
-    </div>
-    <div class="home-screen-footer">
-      <!--  <ChatScreen
-        v-if="isActive"
-        v-bind:class="{ active: this.$store.state.active }"
-        :room="this.$store.state.yourRoom.index"
-      /> -->
-      <ChatContainer style="margin-left:100px; margin-top:300px" />
     </div>
   </div>
 </template>
@@ -30,21 +31,33 @@
 
 .home-screen-content {
   width: 100%;
-  height: auto;
   margin: -10px auto;
+  position: relative;
 }
 .content-notifycation {
   width: 100%;
-  height: 150px;
+  height: 160px;
   background: #6f9562;
 }
+.content-notifycation #chatframe {
+  margin-left: 1200px;
+  position: relative;
+  z-index: 1;
+  top: 30px;
+}
+
 .content-search {
+  position: relative;
   width: 80%;
   height: auto;
   margin: 0 auto;
   border-radius: 8px;
-  margin-top: -20px;
+  margin-top: 0px;
   background: white;
+}
+.content-search #search {
+  position: relative;
+  z-index: 0;
 }
 .content-list {
   margin-top: 20px;
@@ -52,7 +65,7 @@
   justify-content: center;
   align-items: center;
 }
-.active {
+.isActive {
   display: none;
 }
 </style>
@@ -63,6 +76,7 @@ import List from "./List.vue";
 import Notifycation from "./Notifycation.vue";
 import ChatScreen from "./Chat/Chat.vue";
 import ChatContainer from "./Chat/ChatContainer.vue";
+import ChatFrame from "./Chat/ChatList.vue";
 import io from "socket.io-client";
 import { URL } from "./config/axios/constant";
 export default {
@@ -72,26 +86,19 @@ export default {
     List,
     Notifycation,
     ChatScreen,
-    ChatContainer
+    ChatContainer,
+    ChatFrame
   },
   mounted() {
-    /* this.axios.get("http://localhost:5000/profile/getByList").then(response => {
-      this.user = response.data;
-      console.log("hello");
-      console.log(this.user);
-      this.user.forEach(user => {
-        this.socket.emit("YOUR_ROOM", $cookies.get("token") + "-" + user.Index);
-        console.log($cookies.get("token") + "-" + user.Index);
-      });
-    }); */
+    this.socket.emit("online", {
+      userID: $cookies.get("token")
+    });
   },
-
   data() {
     return {
       formData: {},
-      user: [],
       isActive: true,
-      socket:io(URL)
+      socket: io(URL)
     };
   },
   computed: {}

@@ -127,7 +127,6 @@ export default {
         }
       ],
       isActive: false,
-      isShowError: false,
       messageAlert: ""
     };
   },
@@ -140,7 +139,6 @@ export default {
           response.data.state !== "successful" &&
           response.data.state !== "existed"
         ) {
-          this.isShowError = true;
           const errorRegister = response.data.details;
           errorRegister.forEach(element => {
             this.errors.push({
@@ -150,11 +148,22 @@ export default {
           });
         } else {
           if (response.data.state == "existed") {
-            alert("Tài khoản đã tồn tại");
+            this.$fire({
+              title: "Failed",
+              text: "Account existed",
+              type: "error"
+            }).then(r => {
+              console.log("failed");
+            });
           } else {
             this.$cookies.set("token", response.data.id);
-            alert("Đăng kí thành công");
-            this.$router.push("profile/create-profile");
+            this.$fire({
+              title: "Success",
+              text: "Register sucessfully",
+              type: "success"
+            }).then(r => {
+              this.$router.push("profile/create-profile");
+            });
           }
         }
         console.log(response.data);

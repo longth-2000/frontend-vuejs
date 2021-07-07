@@ -4,18 +4,18 @@
       <div class="information">
         <div class="image">
           <img id="image" :src="this.$store.state.image" />
-          <div class="upload-image" id="change-avatar" @click="showModal">
+          <div class="upload-image" id="change-avatar" @click="showModalAvatar">
             <p>Thay đổi avatar</p>
           </div>
           <modal
             :width="1000"
             :height="auto"
             :scrollable="true"
-            name="example"
-            class="example"
+            name="cropper"
+            class="cropper"
           >
             <div>
-              <Cropper :modal="this.$modal"  />
+              <Cropper :modal="this.$modal" />
             </div>
           </modal>
         </div>
@@ -30,6 +30,22 @@
               <p>Cập nhật hồ sơ cá nhân</p>
             </div>
           </router-link>
+          <div id="show-criteria">
+            <router-link :to="'/api/facebook/' + this.$route.params.id" class="router-link">
+              <h4>Tìm kiếm người phù hợp</h4>
+            </router-link>
+            <modal
+              :width="800"
+              :height="1000"
+              :scrollable="true"
+              name="criteria"
+              class="criteria"
+            >
+              <div>
+                <Criteria :modal="this.$modal" />
+              </div>
+            </modal>
+          </div>
         </div>
         <div class="reaction">
           <div class="reaction-content">
@@ -69,22 +85,6 @@
               >
               <span>{{ likedUsers }}</span>
             </div>
-            <!-- <div class="view reaction-view">
-              <router-link to="/">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 128 80"
-                  id="icon-eye"
-                  style="width:85%; margin-left:6px; opacity:0.5"
-                >
-                  <path
-                    d="M64 0C36.09 0 11.89 16.25 0 40c11.89 23.75 36.09 40 64 40 27.91 0 52.11-16.25 64-40C116.11 16.25 91.91 0 64 0zm31.56 21.21A60.88 60.88 0 01114.24 40a60.88 60.88 0 01-18.68 18.79 58.59 58.59 0 01-63.12 0A60.86 60.86 0 0113.76 40a60.85 60.85 0 0120.17-19.7 32 32 0 1060.15 0l1.48.91zM64 27.25a12 12 0 11-24 0 12 12 0 0124 0z"
-                  ></path>
-                </svg>
-                <md-tooltip md-direction="bottom">Hồ sơ đã xem</md-tooltip>
-              </router-link>
-              <span>2</span>
-            </div> -->
             <div class="message reaction-view" @click="displayChatFrame">
               <md-icon class="fa fa-comment md-size-2x"></md-icon>
               <md-tooltip md-direction="bottom">Tin nhắn</md-tooltip>
@@ -99,11 +99,13 @@
 import Chart from "./Chart.vue";
 import { URL } from "./config/axios/constant";
 import Cropper from "./items/Cropper.vue";
+import Criteria from "./Trash/Trash.vue";
 export default {
   name: "Notifycation",
   components: {
     Chart,
-    Cropper
+    Cropper,
+    Criteria
   },
   data() {
     return {
@@ -119,11 +121,13 @@ export default {
       this.nameUser = this.$store.state.nameUser;
       return this.nameUser;
     }
-   
   },
   methods: {
-    showModal() {
-      this.$modal.show("example");
+    showModalAvatar() {
+      this.$modal.show("cropper");
+    },
+    showModalCriteria() {
+      this.$modal.show("criteria");
     },
     hideModal() {},
     displayChatFrame() {
@@ -133,10 +137,11 @@ export default {
       this.$store.commit("changeDisplayChatFrame", displayChatFrame);
     }
   },
-  mounted() {
+  created() {
     let one = `${URL}/profile/${$cookies.get("token")}`;
     let two = `${URL}/react/liked/${$cookies.get("token")}`;
     let three = `${URL}/react/isliked/${$cookies.get("token")}`;
+    
     const requestOne = this.axios.get(one);
     const requestTwo = this.axios.get(two);
     const requestThree = this.axios.get(three);
@@ -146,8 +151,8 @@ export default {
         this.$store.commit("changeNameUser", this.listUser.FullName);
         this.likedUsers = responses[1].data.length;
         this.isLikedUsers = responses[2].data.length;
-        this.image = `${URL}/images/upload/${this.listUser.Index}/${this.listUser.Image}`;
-        this.$store.commit("changeImage",this.image)
+        this.image = this.listUser.Image;
+        this.$store.commit("changeImage", this.image);
       })
     );
   }
@@ -186,6 +191,12 @@ export default {
 .notify-content .information .name h3 {
   font-weight: 400;
 }
+.notify-content .information .name h4 {
+  font-weight: 300;
+}
+.notify-content .information .name h4:hover {
+  cursor: pointer;
+}
 .notify-content .information .upload-image {
   width: 200px;
   height: 30px;
@@ -203,6 +214,8 @@ export default {
   height: 24px;
   margin-left: 6px;
   margin-top: 10px;
+}
+.notify-content .information #show-criteria {
 }
 .notify-content .information .vm--modal {
   height: auto !important;

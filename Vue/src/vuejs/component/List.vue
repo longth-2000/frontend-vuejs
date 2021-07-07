@@ -46,11 +46,7 @@
           </md-icon>
         </div>
 
-        <div style="margin-left:20px">
-          <md-icon class="fa fa-thumbs-up">
-            <md-tooltip md-direction="bottom">Thích</md-tooltip>
-          </md-icon>
-        </div>
+        
         <div
           @click="displayChat(users.Index, users.FullName, users.Image, 0)"
           style="margin-left:20px"
@@ -153,7 +149,7 @@ export default {
 }
 .List-content-items .react {
   margin-top: 30px;
-  margin-left: 30px;
+  margin-left: 70px;
   display: flex;
 }
 .List-content-items .information .infor-line {

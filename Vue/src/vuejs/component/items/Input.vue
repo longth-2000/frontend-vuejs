@@ -130,7 +130,8 @@ export default {
   props: {
     data: Object,
     image: File,
-    action: String
+    action: String,
+    facebook:Object
   },
   components: {
     VueNumericInput
@@ -152,7 +153,6 @@ export default {
       listDistrict: [],
       message: "",
       type: "",
-      listProvince: [],
       listDistrict: [],
       idProvince: "",
       value: 18,
@@ -162,7 +162,7 @@ export default {
       active: false
     };
   },
-  mounted() {
+  created() {
     const api = API.ADDRESS.province();
     const { endpoint, method } = api;
     axiosConfig(endpoint, method).then(response => {
@@ -247,7 +247,7 @@ export default {
           this.$store.state.nameUser = this.type;
         });
         this.active = true;
-      }
+      } 
     },
     createProfile() {
       const api = API.PROFILE.createProfile();
@@ -281,7 +281,7 @@ export default {
             });
           });
         }
-      });
+      }); 
     }
   },
   onConfirm() {

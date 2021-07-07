@@ -5,9 +5,9 @@
       <div class="create-profile-content">
         <form action="" method="post" enctype="multipart/form-data">
           <md-table id="image-upload">
-            <md-table-row >
-              <md-table-cell  class="profile-items-title" >>Ảnh </md-table-cell>
-              <md-table-cell 
+            <md-table-row>
+              <md-table-cell class="profile-items-title">>Ảnh </md-table-cell>
+              <md-table-cell
                 ><div class="image-user">
                   <md-field>
                     <label>Only images</label>
@@ -20,11 +20,9 @@
                   </md-field></div
               ></md-table-cell>
             </md-table-row>
-           
           </md-table>
-           <Input action="create-profile" :image="dataImage" />
+          <Input action="create-profile" :image="dataImage" :facebook="this.facebookUser" />
         </form>
-
       </div>
     </div>
   </div>
@@ -41,17 +39,16 @@
   align-items: center;
   height: 80%;
 }
-.create-profile .create-profile-content{
+.create-profile .create-profile-content {
   width: 80%;
 }
-.create-profile .create-profile-content #image-upload{
+.create-profile .create-profile-content #image-upload {
   background: chartreuse;
   width: 80%;
 }
-.profile-items-title{
+.profile-items-title {
   width: 20%;
 }
-
 </style>
 <script>
 import VueNumericInput from "vue-numeric-input";
@@ -64,17 +61,11 @@ export default {
 
   data() {
     return {
-      dataImage: {}
+      dataImage: {},
+      facebookUser: {}
     };
   },
-  mounted() {
-    const api = API.ADDRESS.province();
-    const { endpoint, method } = api;
-    axiosConfig(endpoint, method).then(response => {
-      this.listProvince = response.data.LtsItem;
-      console.log(response.data.LtsItem);
-    });
-  },
+  
   components: {
     VueNumericInput,
     Header,
@@ -91,9 +82,7 @@ export default {
     updateProfile() {
       var imageFile = document.querySelector("#image");
       this.dataImage = imageFile.files[0];
-    },
-    
-   
+    }
   }
 };
 </script>

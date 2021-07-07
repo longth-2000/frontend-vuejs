@@ -54,14 +54,14 @@ export default {
       imageLink: ""
     };
   },
-  mounted() {
+  created() {
     const api = API.PROFILE.getProfileById(this.$route.params.id);
     const { endpoint, method } = api;
     axiosConfig(endpoint, method).then(response => {
       this.$store.commit("changeListProfile", response.data[0]);
-      this.imageLink =
-        `${URL}/images/upload/${this.$route.params.id}/` +
-        response.data[0].Image;
+      this.imageLink =response.data[0].Image;
+       /*  `${URL}/images/upload/${this.$route.params.id}/` +
+        response.data[0].Image; */
     });
   },
   computed: {

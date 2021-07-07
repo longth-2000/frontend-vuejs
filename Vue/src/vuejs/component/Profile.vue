@@ -12,7 +12,7 @@
             </div>
           </md-step>
 
-          <md-step id="second" md-label="Ảnh">
+          <md-step id="second" md-label="Người phù hợp">
             <div class="profile-frame"></div>
           </md-step>
 

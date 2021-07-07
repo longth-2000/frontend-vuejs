@@ -1,7 +1,7 @@
 export const API = {
     USER: {
         login: () => ({
-            endpoint: "",
+            endpoint: "login",
             method: "POST",
         }),
         register: () => ({
@@ -28,6 +28,10 @@ export const API = {
         }),
         changeAvatar: (idUser) => ({
             endpoint: `profile/change-avatar/${idUser}`,
+            method:"POST"
+        }),
+        chooseByCriteria: () => ({
+            endpoint:"profile/criteria",
             method:"POST"
         })
     },
@@ -78,6 +82,16 @@ export const API = {
         displayContentByID: (id) => ({
             endpoint:`chat/display/${id}`,
             method:"GET"
+        })
+    },
+    AUTH: {
+        authenticationGoogle: () => ({
+            endpoint:"auth/google",
+            method:"POST"
+        }),
+        refreshToken: () => ({
+            endpoint:"refresh-token",
+            method:"POST"
         })
     }
 }

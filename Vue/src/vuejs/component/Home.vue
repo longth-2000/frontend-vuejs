@@ -89,10 +89,14 @@ export default {
     ChatContainer,
     ChatFrame
   },
+  created() {
+    this.$cookies.set("token", this.$route.params.id, 60 * 10);
+  },
   mounted() {
     this.socket.emit("online", {
       userID: $cookies.get("token")
     });
+    
   },
   data() {
     return {

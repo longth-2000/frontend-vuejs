@@ -1,6 +1,6 @@
 <template>
-  <div class="app-login">
-    <div class="app-login-frame">
+  <div class="app-register">
+    <div class="app-register-frame">
       <img class="background-login" src="../assets/image/date.png" />
       <div class="form">
         <img class="logo" src="../assets/image/logo-1.png" />
@@ -38,6 +38,27 @@
             ></md-input>
           </md-field>
           <span class="error">{{ showError("Password") }}</span>
+          <!-- <div class="role">
+            <div
+              class="admin frame"
+              v-bind:class="{ active_role: role.admin }"
+              @click="chooseRole($event)"
+            >
+              <md-icon class="fa fa-user-plus icon"></md-icon>
+              <p class="title">admin</p>
+            </div>
+            <div
+              class="user frame"
+              v-bind:class="{ active_role: role.user }"
+              @click="chooseRole($event)"
+            >
+              <md-icon
+                class="fa fa-user icon"
+                style="font-size: 40px"
+              ></md-icon>
+              <p class="title">user</p>
+            </div>
+          </div> -->
           <div class="button">
             <md-button type="submit" class="md-raised md-primary"
               >Register</md-button
@@ -50,7 +71,7 @@
   </div>
 </template>
 <style lang="scss" scoped>
-.app-login {
+.app-register {
   background-image: url("../assets/image/background-image.png");
   background-size: cover;
   height: 1000px;
@@ -58,9 +79,9 @@
   align-items: center;
   justify-content: center;
 }
-.app-login-frame {
+.app-register-frame {
   width: 900px;
-  height: 506px;
+  height: 600px;
   background-color: white;
   border-radius: 10px;
   display: flex;
@@ -70,27 +91,27 @@
   height: 100%;
   object-fit: cover;
 }
-.app-login .form {
+.app-register .form {
   margin-left: 50px;
-  margin-top: 10px;
+  margin-top: 50px;
 }
-.app-login .form .logo {
+.app-register .form .logo {
   display: block;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: -20px;
 }
-.app-login .form .error {
+.app-register .form .error {
   color: red;
   padding: 0;
 }
-.app-login .button {
+.app-register .button {
   margin: 20px auto;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.app-login .button button {
+.app-register .button button {
   width: 100%;
   border-radius: 20px;
 }
@@ -107,9 +128,37 @@
   margin: 0 auto;
   text-align: center;
 }
-.app-login .register .router {
+.app-register .register .router {
   color: crimson;
   font-weight: bold;
+}
+.app-register .role {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-evenly;
+}
+.app-register .role .frame {
+  width: 120px;
+  height: 50px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+
+  border: 1px solid #c0c0c0;
+}
+.app-register .role .frame :hover {
+  cursor: pointer;
+}
+.app-register .role .frame .icon {
+  flex: 3;
+  margin-left: 20px;
+}
+.app-register .role .frame .title {
+  flex: 5;
+}
+.active_role {
+  background: #ff9933;
 }
 </style>
 <script>
@@ -127,7 +176,11 @@ export default {
         }
       ],
       isActive: false,
-      messageAlert: ""
+      messageAlert: "",
+      role:{
+        admin:false,
+        user:false
+      }
     };
   },
   methods: {
@@ -178,8 +231,18 @@ export default {
       });
       return object.message;
     },
-    alert() {
-      console.log(this.messageAlert);
+    chooseRole(event) {
+        var classArray = event.currentTarget.getAttribute('class').split(' ')
+        if(classArray.includes("user")) {
+          this.role.user = true
+          this.role.admin = false
+          this.formdata.role = "user"
+        } 
+        else {
+          this.role.user = false
+          this.role.admin = true
+          this.formdata.role = "admin"
+        }   
     }
   }
 };

@@ -31,7 +31,7 @@ export default {
       listProfile: {}
     };
   },
-  mounted() {
+  created() {
     const api = API.PROFILE.getProfileById(this.$route.params.id);
     const { endpoint, method } = api;
     axiosConfig(endpoint, method).then(response => {

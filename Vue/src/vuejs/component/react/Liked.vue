@@ -57,13 +57,7 @@
                 <md-tooltip md-direction="bottom">Bỏ thích</md-tooltip>
               </div>
             </div>
-            <div>
-              <md-icon
-                class=" fa fa-comment md-size-3x"
-                style="color:#484799"
-              ></md-icon>
-              <md-tooltip md-direction="bottom">Nhắn tin</md-tooltip>
-            </div>
+            
           </div>
         </div>
       </div>

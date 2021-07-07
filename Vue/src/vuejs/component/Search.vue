@@ -216,12 +216,12 @@ export default {
       return rangeAge;
     }
   },
-  mounted() {
+  created() {
     const api = API.ADDRESS.province();
     const { endpoint, method } = api;
     axiosConfig(endpoint, method).then(response => {
       this.listProvince = response.data.results;
-      console.log(this.listProvince); 
+      console.log(this.listProvince);
     });
   },
   methods: {
@@ -230,8 +230,10 @@ export default {
       const api = API.SEARCH.basicSearch();
       const { endpoint, method } = api;
       axiosConfig(endpoint, method, this.formData).then(response => {
-        this.$store.commit("changeDisplayUserList", response.data);
-        console.log(response.data);
+        console.log(response.data)
+        if (response.data !== "Expired Token") {
+          this.$store.commit("changeDisplayUserList", response.data);
+        }
       });
     },
     advancedSearch() {

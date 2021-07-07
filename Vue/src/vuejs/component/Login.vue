@@ -2,7 +2,7 @@
   <div class="app-login">
     <div class="app-login-frame">
       <img class="background-login" src="../assets/image/date.png" />
-      <div class="form">
+      <div class="form ">
         <img class="logo" src="../assets/image/logo-1.png" />
         <link
           rel="stylesheet"
@@ -35,10 +35,34 @@
             >Login</md-button
           >
         </div>
-        <br />
+        
         <div class="register">
           Don't have account?
           <router-link to="/register">Register</router-link>
+        </div>
+        <div class="or">
+          <h2>Or</h2>
+        </div>
+        <div class="Oauth_login">
+          <div>
+            <a href="http://localhost:5000/auth/google">
+              <div class="google frame">
+                <md-icon class="fa fa-google-plus icon" style="color:white" />
+                <p class="title">Đăng nhập bằng google</p>
+              </div>
+            </a>
+          </div>
+          <br />
+          <div>
+            <a href="https://4333cb45c0dc.ngrok.io/auth/facebook">
+              <div class="facebook frame">
+                <md-icon class="fa fa-facebook-square icon"
+                  style="color:white"
+                ></md-icon>
+                 <p class="title">Đăng nhập bằng facebook</p>
+              </div>
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -56,7 +80,7 @@
 }
 .app-login-frame {
   width: 900px;
-  height: 506px;
+  height: 650px;
   background-color: white;
   border-radius: 10px;
   display: flex;
@@ -68,7 +92,7 @@
 }
 .app-login .form {
   margin-left: 50px;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 .app-login .form .logo {
   display: block;
@@ -84,7 +108,6 @@
 }
 .app-login .button button {
   width: 100%;
-  border-radius: 20px;
 }
 .md-field {
   height: 0px;
@@ -101,6 +124,42 @@
 .app-login .register .router {
   color: crimson;
   font-weight: bold;
+}
+.app-login .Oauth_login {
+  width: 100%;
+  margin-top: 30px;
+}
+.app-login .Oauth_login a {
+  text-decoration: none;
+}
+.app-login .Oauth_login .frame {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  
+}
+.app-login .Oauth_login .frame .icon{
+  margin-left: 30px;
+  flex: 1;
+}
+.app-login .Oauth_login .frame .title{
+  margin-left: 30px;
+   flex: 5;
+}
+.app-login .Oauth_login .facebook {
+  background: #3b5998;
+  color: white;
+}
+.app-login .Oauth_login .google {
+  background: #DB4437;
+  color: white;
+  font-family: Helvetica, Arial, sans-serif;
+}
+.app-login .or{
+  width: 10px;
+  height: 10px;
+  margin: 0 auto;
 }
 </style>
 
@@ -136,8 +195,12 @@ export default {
       const { endpoint, method } = api;
       axiosConfig(endpoint, method, this.formdata).then(response => {
         if (response.data.status == true) {
-          var token = VueJwtDecode.decode(response.data.index);
-          this.$cookies.set("token", token.index);
+          var accessToken = response.data.accessToken;
+          var refreshToken = response.data.refreshToken;
+          var token = VueJwtDecode.decode(accessToken);
+          this.$cookies.set("AUTHORIZATION-TOKEN", accessToken, 60 * 10);
+          this.$cookies.set("REFRESH-TOKEN", refreshToken, 60 * 60 * 24);
+          this.$cookies.set("token", token.index, 60 * 10);
           this.$fire({
             title: "Success",
             text: "Login sucessfully",
@@ -151,8 +214,8 @@ export default {
             text: "Incrorrect password or email",
             type: "error"
           }).then(r => {
-            console.log("failed")
-          });
+            console.log("failed");
+          }); 
         }
       });
     },

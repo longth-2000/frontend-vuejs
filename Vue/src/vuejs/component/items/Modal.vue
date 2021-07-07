@@ -14,7 +14,7 @@ export default {
   components: {
     Cropper
   },
-  mounted() {},
+
   methods: {
     showModal() {
        this.$modal.show("example"); 

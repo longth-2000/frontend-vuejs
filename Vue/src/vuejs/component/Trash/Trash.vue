@@ -9,9 +9,9 @@
       </md-table-row>
 
       <md-table-row>
-        <md-table-cell md-numeric>1</md-table-cell>
-        <md-table-cell>Giới tính</md-table-cell>
-        <md-table-cell>Khác giới tính </md-table-cell>
+        <md-table-cell md-numeric>22222222222</md-table-cell>
+        <md-table-cell>11111111</md-table-cell>
+        <md-table-cell>33333333333333</md-table-cell>
         <md-table-cell>
           <input v-model="formData.sex" />
         </md-table-cell>

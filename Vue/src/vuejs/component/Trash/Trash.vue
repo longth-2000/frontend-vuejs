@@ -18,9 +18,12 @@
       </md-table-row>
 
       <md-table-row>
-        <md-table-cell md-numeric>2</md-table-cell>
-        <md-table-cell>Địa chỉ</md-table-cell>
-        <md-table-cell>Cùng địa chỉ</md-table-cell>
+        <md-table-cell md-numeric>long</md-table-cell>
+        <md-table-cell>long</md-table-cell>
+        <md-table-cell>long</md-table-cell>
+        <md-table-cell>long</md-table-cell>
+        <md-table-cell>long</md-table-cell>
+        <md-table-cell>long</md-table-cell>
         <md-table-cell><input v-model="formData.address"/></md-table-cell>
       </md-table-row>
 

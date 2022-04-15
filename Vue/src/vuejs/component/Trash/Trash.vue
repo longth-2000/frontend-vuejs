@@ -2,10 +2,10 @@
   <div>
     <md-table>
       <md-table-row>
-        <md-table-head md-numeric>ID</md-table-head>
-        <md-table-head>Tiêu chí</md-table-head>
-        <md-table-head>Điều kiện xét</md-table-head>
-        <md-table-head>Điểm cộng</md-table-head>
+        <md-table-head md-numeric>Trash</md-table-head>
+        <md-table-head>Trash</md-table-head>
+        <md-table-head>Trash</md-table-head>
+        <md-table-head>Trash</md-table-head>
       </md-table-row>
 
       <md-table-row>
